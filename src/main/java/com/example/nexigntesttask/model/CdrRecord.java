@@ -1,4 +1,4 @@
-package com.example.nexigntesttask.models;
+package com.example.nexigntesttask.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

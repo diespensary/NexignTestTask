@@ -1,7 +1,7 @@
 package com.example.nexigntesttask;
 
-import com.example.nexigntesttask.services.CdrGeneratorService;
-import com.example.nexigntesttask.services.SubscriberGeneratorService;
+import com.example.nexigntesttask.service.CdrRecordGeneratorService;
+import com.example.nexigntesttask.service.SubscriberGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataGeneratorRunner implements ApplicationRunner {
     private final SubscriberGeneratorService subscriberService;
-    private final CdrGeneratorService callGeneratorService;
+    private final CdrRecordGeneratorService callGeneratorService;
 
     @Override
     public void run(ApplicationArguments args) {

@@ -1,9 +1,9 @@
-package com.example.nexigntesttask.services;
+package com.example.nexigntesttask.service;
 
-import com.example.nexigntesttask.models.CdrRecord;
-import com.example.nexigntesttask.models.Subscriber;
-import com.example.nexigntesttask.repositories.CdrRecordRepository;
-import com.example.nexigntesttask.repositories.SubscriberRepository;
+import com.example.nexigntesttask.model.CdrRecord;
+import com.example.nexigntesttask.model.Subscriber;
+import com.example.nexigntesttask.repository.CdrRecordRepository;
+import com.example.nexigntesttask.repository.SubscriberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class CdrGeneratorService {
+public class CdrRecordGeneratorService {
     private final SubscriberRepository subscriberRepository;
     private final CdrRecordRepository cdrRecordRepository;
     private final Random random = new Random();
@@ -24,8 +24,8 @@ public class CdrGeneratorService {
     public void generateCdrRecordsForOneYear() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
 
-        LocalDateTime startDate = LocalDateTime.now();
-        LocalDateTime endDate = startDate.plusYears(1);
+        LocalDateTime startDate = LocalDateTime.of(2025, 1, 1, 0, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2026, 1, 1, 0, 0, 0);
         LocalDateTime currentTime = startDate;
 
         List<CdrRecord> records = new ArrayList<>();

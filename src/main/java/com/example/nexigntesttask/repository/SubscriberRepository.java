@@ -1,6 +1,6 @@
-package com.example.nexigntesttask.repositories;
+package com.example.nexigntesttask.repository;
 
-import com.example.nexigntesttask.models.Subscriber;
+import com.example.nexigntesttask.model.Subscriber;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

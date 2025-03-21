@@ -1,7 +1,7 @@
-package com.example.nexigntesttask.services;
+package com.example.nexigntesttask.service;
 
-import com.example.nexigntesttask.models.Subscriber;
-import com.example.nexigntesttask.repositories.SubscriberRepository;
+import com.example.nexigntesttask.model.Subscriber;
+import com.example.nexigntesttask.repository.SubscriberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
