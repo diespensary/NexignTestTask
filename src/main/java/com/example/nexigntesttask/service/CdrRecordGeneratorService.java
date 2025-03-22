@@ -31,14 +31,14 @@ public class CdrRecordGeneratorService {
         List<CdrRecord> records = new ArrayList<>();
 
         while (currentTime.isBefore(endDate)) {
-            // интервал между звонками от 30 минут до 7 дней
+            // Интервал между звонками от 30 минут до 7 дней
             int intervalBetweenCalls = 30 + random.nextInt(7 * 24 * 60 - 30);
             currentTime = currentTime.plusMinutes(intervalBetweenCalls);
             if (currentTime.isAfter(endDate)) {
                 break;
             }
 
-            // длительность звонка от 30 секунд до 30 минут
+            // Длительность звонка от 30 секунд до 30 минут
             int durationSeconds = 30 + random.nextInt(30 * 60 - 30);
             LocalDateTime callEndTime = currentTime.plusSeconds(durationSeconds);
 

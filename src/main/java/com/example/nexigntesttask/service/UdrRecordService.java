@@ -19,9 +19,9 @@ public class UdrRecordService {
     private final CdrRecordRepository cdrRecordRepository;
 
     /**
-     * Получить UDR для одного абонента.
-     * Если month передан – агрегировать данные за указанный месяц (год зафиксирован – 2025),
-     * иначе – агрегировать за весь период.
+     * Получить UDR для одного абонента
+     * Если month передан – агрегировать данные за указанный месяц (год зафиксирован – 2025)
+     * Иначе – агрегировать за весь период
      */
     public UdrRecordDto getUdrForSubscriber(String msisdn, Integer month) {
         List<CdrRecord> records;
@@ -36,7 +36,7 @@ public class UdrRecordService {
                     .collect(Collectors.toList());
         }
 
-        // Суммируем длительность входящих и исходящих вызовов отдельно.
+        // Суммируем длительность входящих и исходящих вызовов отдельно
         long incomingSeconds = records.stream()
                 .filter(r -> "02".equals(r.getType()) && msisdn.equals(r.getRecipientMsisdn()))
                 .mapToLong(r -> Duration.between(r.getStartTime(), r.getEndTime()).getSeconds())
@@ -51,9 +51,9 @@ public class UdrRecordService {
     }
 
     /**
-     * Получить UDR для всех абонентов.
-     * Если month передан – агрегировать данные за указанный месяц (год зафиксирован – 2025),
-     * иначе – агрегировать за весь период.
+     * Получить UDR для всех абонентов
+     * Если month передан – агрегировать данные за указанный месяц (год зафиксирован – 2025)
+     * Иначе – агрегировать за весь период
      */
     public List<UdrRecordDto> getUdrForAllSubscribers(Integer month) {
         List<CdrRecord> records;
@@ -65,30 +65,30 @@ public class UdrRecordService {
             records = cdrRecordRepository.findAll();
         }
 
-        // Для агрегации по всем абонентам пройдёмся по всем записям и соберём данные в карту,
-        // где ключ – номер абонента, а значение – массив из двух элементов:
-        // [0] – суммарное время входящих вызовов, [1] – суммарное время исходящих вызовов.
+        // Для агрегации по всем абонентам пройдёмся по всем записям и соберем данные в карту,
+        // Где ключ – номер абонента, а значение – массив из двух элементов:
+        // [0] – суммарное время входящих вызовов, [1] – суммарное время исходящих вызовов
         Map<String, long[]> durations = new java.util.HashMap<>();
         for (CdrRecord record : records) {
             long callDuration = Duration.between(record.getStartTime(), record.getEndTime()).getSeconds();
-            // Если это исходящий вызов, обновляем данные инициатора.
+            // Если это исходящий вызов, обновляем данные инициатора
             if ("01".equals(record.getType())) {
                 durations.computeIfAbsent(record.getInitiatorMsisdn(), k -> new long[2]);
                 durations.get(record.getInitiatorMsisdn())[1] += callDuration;
             }
-            // Если входящий – обновляем данные получателя.
+            // Если входящий – обновляем данные получателя
             if ("02".equals(record.getType())) {
                 durations.computeIfAbsent(record.getRecipientMsisdn(), k -> new long[2]);
                 durations.get(record.getRecipientMsisdn())[0] += callDuration;
             }
         }
-        // Формируем список DTO на основе собранных данных.
+        // Формируем список DTO на основе собранных данных
         return durations.entrySet().stream()
                 .map(e -> new UdrRecordDto(e.getKey(), formatDuration(e.getValue()[0]), formatDuration(e.getValue()[1])))
                 .collect(Collectors.toList());
     }
 
-    // Утилиты для вычисления начала и конца месяца (год зафиксирован – 2025)
+    // Для вычисления начала и конца месяца (год зафиксирован – 2025)
     private LocalDateTime getStartForMonth(int month) {
         return YearMonth.of(2025, month).atDay(1).atStartOfDay();
     }
@@ -97,7 +97,7 @@ public class UdrRecordService {
         return YearMonth.of(2025, month).atEndOfMonth().atTime(23, 59, 59);
     }
 
-    // Утилита для форматирования секунд в формат HH:mm:ss
+    // Для форматирования секунд в формат hh:mm:ss
     private String formatDuration(long totalSeconds) {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;

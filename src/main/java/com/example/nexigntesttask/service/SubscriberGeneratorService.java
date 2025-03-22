@@ -28,10 +28,10 @@ public class SubscriberGeneratorService {
             return;
         }
 
-        // диапазон российских номеров
+        // Диапазон российских номеров
         long min = 79000000000L;
         long max = 79999999999L;
-        long range = max - min + 1; // генерируем случайный номер так: прибавляем к min число от 0 до range - 1
+        long range = max - min + 1; // Генерируем случайный номер так: прибавляем к min число от 0 до range - 1
 
         for (int i = 0; i < count; i++) {
             String msisdn;
