@@ -5,7 +5,6 @@ import com.example.nexigntesttask.model.CdrRecord;
 import com.example.nexigntesttask.model.Subscriber;
 import com.example.nexigntesttask.repository.CdrRecordRepository;
 import com.example.nexigntesttask.repository.SubscriberRepository;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
