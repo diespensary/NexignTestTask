@@ -2,6 +2,7 @@ package com.example.nexigntesttask.service;
 
 import com.example.nexigntesttask.model.CdrRecord;
 import com.example.nexigntesttask.repository.CdrRecordRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -15,12 +16,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CdrReportService {
     private final CdrRecordRepository cdrRecordRepository;
-
-    public CdrReportService(CdrRecordRepository cdrRecordRepository) {
-        this.cdrRecordRepository = cdrRecordRepository;
-    }
 
     /**
      * Генерирует CDR-отчет для указанного абонента за заданный период.
