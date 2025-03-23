@@ -1,6 +1,6 @@
 package com.example.nexigntesttask.service;
 
-import com.example.nexigntesttask.dto.UdrRecordDto;
+import com.example.nexigntesttask.dto.UdrResponse;
 import com.example.nexigntesttask.model.CdrRecord;
 import com.example.nexigntesttask.repository.CdrRecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class UdrRecordService {
      * Если month передан – агрегировать данные за указанный месяц (год зафиксирован – 2025)
      * Иначе – агрегировать за весь период
      */
-    public UdrRecordDto getUdrForSubscriber(String msisdn, Integer month) {
+    public UdrResponse getUdrForSubscriber(String msisdn, Integer month) {
         List<CdrRecord> records;
         if (month != null) {
             LocalDateTime start = getStartForMonth(month);
@@ -47,7 +47,7 @@ public class UdrRecordService {
                 .mapToLong(r -> Duration.between(r.getStartTime(), r.getEndTime()).getSeconds())
                 .sum();
 
-        return new UdrRecordDto(msisdn, formatDuration(incomingSeconds), formatDuration(outcomingSeconds));
+        return new UdrResponse(msisdn, formatDuration(incomingSeconds), formatDuration(outcomingSeconds));
     }
 
     /**
@@ -55,7 +55,7 @@ public class UdrRecordService {
      * Если month передан – агрегировать данные за указанный месяц (год зафиксирован – 2025)
      * Иначе – агрегировать за весь период
      */
-    public List<UdrRecordDto> getUdrForAllSubscribers(Integer month) {
+    public List<UdrResponse> getUdrForAllSubscribers(Integer month) {
         List<CdrRecord> records;
         if (month != null) {
             LocalDateTime start = getStartForMonth(month);
@@ -84,7 +84,7 @@ public class UdrRecordService {
         }
         // Формируем список DTO на основе собранных данных
         return durations.entrySet().stream()
-                .map(e -> new UdrRecordDto(e.getKey(), formatDuration(e.getValue()[0]), formatDuration(e.getValue()[1])))
+                .map(e -> new UdrResponse(e.getKey(), formatDuration(e.getValue()[0]), formatDuration(e.getValue()[1])))
                 .collect(Collectors.toList());
     }
 

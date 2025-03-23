@@ -1,5 +1,6 @@
 package com.example.nexigntesttask.service;
 
+import com.example.nexigntesttask.handler.exceptions.FileWriteException;
 import com.example.nexigntesttask.model.CdrRecord;
 import com.example.nexigntesttask.repository.CdrRecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class CdrReportService {
      * @return уникальный UUID запроса
      * @throws IOException если возникает ошибка при записи файла
      */
-    public UUID generateReport(String msisdn, LocalDateTime startDate, LocalDateTime endDate) throws IOException {
+    public UUID generateReport(String msisdn, LocalDateTime startDate, LocalDateTime endDate) {
         // Выбираем все записи, где номер встречается как инициатор или получатель, и время звонка входит в заданный период
         List<CdrRecord> records = cdrRecordRepository.findAll().stream()
                 .filter(r ->
@@ -71,6 +72,9 @@ public class CdrReportService {
                 writer.write(line);
                 writer.newLine();
             }
+        }
+        catch (IOException e) {
+            throw new FileWriteException();
         }
 
         return reportUuid;

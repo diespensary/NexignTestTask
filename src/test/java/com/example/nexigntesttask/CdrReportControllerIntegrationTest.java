@@ -1,29 +1,46 @@
 package com.example.nexigntesttask;
 
+import com.example.nexigntesttask.dto.CdrReportResponse;
+import com.example.nexigntesttask.dto.GenerateCdrReportRequest;
 import com.example.nexigntesttask.model.CdrRecord;
 import com.example.nexigntesttask.model.Subscriber;
 import com.example.nexigntesttask.repository.CdrRecordRepository;
 import com.example.nexigntesttask.repository.SubscriberRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@RequiredArgsConstructor
+@AutoConfigureMockMvc
 public class CdrReportControllerIntegrationTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -55,16 +72,29 @@ public class CdrReportControllerIntegrationTest {
 
     // Тест 1: Успешная генерация отчета
     @Test
-    void generateCdrReport_ValidRequest_ReturnsUUIDAndCreatesFile() {
-        ResponseEntity<Map> response = restTemplate.getForEntity(
-                "/cdr-report?msisdn={msisdn}&startDate=2025-02-01T00:00:00&endDate=2025-02-28T23:59:59",
-                Map.class,
-                testMsisdn
-        );
+    void generateCdrReport_ValidRequest_ReturnsUUIDAndCreatesFile() throws Exception {
+        String msisdn = "1234567890";
+        String startDate = "2025-02-01T00:00:00";
+        String endDate = "2025-02-28T23:59:59";
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().containsKey("uuid"));
+        // Выполнение запроса
+        MvcResult result = mockMvc.perform(post("/cdr-report")
+                        .param("msisdn", msisdn)
+                        .param("startDate", startDate)
+                        .param("endDate", endDate)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()) // Проверка статуса ответа
+                .andReturn();
 
+        // Получение JSON из ответа
+        String responseJson = result.getResponse().getContentAsString();
+
+        // Преобразование JSON в DTO
+        CdrReportResponse responseDto = objectMapper.readValue(responseJson, CdrReportResponse.class);
+
+        // Проверка полей DTO
+        assertThat(responseDto.getSomeField()).isEqualTo("expectedValue");
+        assertThat(responseDto.getAnotherField()).isEqualTo(123);
         String uuid = (String) response.getBody().get("uuid");
         File reportFile = new File("reports/" + testMsisdn + "_" + uuid + ".csv");
         assertTrue(reportFile.exists());
