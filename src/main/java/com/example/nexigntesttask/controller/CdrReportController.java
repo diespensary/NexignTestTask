@@ -24,9 +24,9 @@ public class CdrReportController {
      * - startDate, endDate: границы периода (формат ISO 8601)
      *
      * Пример запроса:
-     * POST /cdr-report?msisdn=79991112233&startDate=2025-02-01T00:00:00&endDate=2025-02-15T23:59:59
+     * GET /cdr-report?msisdn=79991112233&startDate=2025-02-01T00:00:00&endDate=2025-02-15T23:59:59
      *
-     * Возвращает сообщение и уникальный UUID запроса.
+     * Возвращает сообщение и уникальный UUID запроса
      */
     @GetMapping
     public ResponseEntity<Map<String, String>> generateCdrReport(
