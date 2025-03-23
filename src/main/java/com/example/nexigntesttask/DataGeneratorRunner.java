@@ -5,10 +5,12 @@ import com.example.nexigntesttask.service.SubscriberGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Profile("!test") // Не запускается в тестовом профиле
 public class DataGeneratorRunner implements ApplicationRunner {
     private final SubscriberGeneratorService subscriberService;
     private final CdrRecordGeneratorService callGeneratorService;
