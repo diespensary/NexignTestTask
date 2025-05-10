@@ -1,8 +1,12 @@
 package com.example.nexigntesttask.controller;
 
+import com.example.nexigntesttask.dto.CdrReportResponse;
+import com.example.nexigntesttask.dto.GenerateCdrReportRequest;
+import com.example.nexigntesttask.dto.UdrResponse;
 import com.example.nexigntesttask.service.CdrReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,21 +32,15 @@ public class CdrReportController {
      *
      * Возвращает сообщение и уникальный UUID запроса
      */
-    @GetMapping
-    public ResponseEntity<Map<String, String>> generateCdrReport(
-            @RequestParam String msisdn,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        try {
-            UUID reportUuid = cdrReportService.generateReport(msisdn, startDate, endDate);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "CDR report generated successfully. File is ready in /reports directory.");
-            response.put("uuid", reportUuid.toString());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", "Error generating CDR report: " + e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-        }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CdrReportResponse generateCdrReport(@RequestBody GenerateCdrReportRequest generateCdrReportRequest) {
+        UUID reportUuid = cdrReportService.generateReport(
+                generateCdrReportRequest.msisdn(),
+                generateCdrReportRequest.startDate(),
+                generateCdrReportRequest.endDate()
+        );
+
+        return new CdrReportResponse(reportUuid);
     }
 }

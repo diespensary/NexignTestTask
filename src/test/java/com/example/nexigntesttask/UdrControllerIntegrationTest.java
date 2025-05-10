@@ -1,6 +1,6 @@
 package com.example.nexigntesttask;
 
-import com.example.nexigntesttask.dto.UdrRecordDto;
+import com.example.nexigntesttask.dto.UdrResponse;
 import com.example.nexigntesttask.model.CdrRecord;
 import com.example.nexigntesttask.model.Subscriber;
 import com.example.nexigntesttask.repository.CdrRecordRepository;
@@ -69,35 +69,35 @@ public class UdrControllerIntegrationTest {
     // Тест 1: Получение UDR для абонента с фильтром по месяцу
     @Test
     void getUdrForSubscriber_WithValidMonth_ReturnsAggregatedData() {
-        UdrRecordDto response = restTemplate.getForObject(
+        UdrResponse response = restTemplate.getForObject(
                 "/udr?msisdn={msisdn}&month=2",
-                UdrRecordDto.class,
+                UdrResponse.class,
                 testMsisdn
         );
 
         assertNotNull(response);
-        assertEquals(testMsisdn, response.getMsisdn());
-        assertEquals("00:05:00", response.getOutcomingCallTotalTime()); // 5 минут исходящих
-        assertEquals("00:00:00", response.getIncomingCallTotalTime()); // Входящих в феврале нет
+        assertEquals(testMsisdn, response.msisdn());
+        assertEquals("00:05:00", response.outcomingCallTotalTime()); // 5 минут исходящих
+        assertEquals("00:00:00", response.incomingCallTotalTime()); // Входящих в феврале нет
     }
 
     // Тест 2: Получение UDR для абонента без фильтрации по месяцу
     @Test
     void getUdrForSubscriber_WithoutMonth_ReturnsAllData() {
-        UdrRecordDto response = restTemplate.getForObject(
+        UdrResponse response = restTemplate.getForObject(
                 "/udr?msisdn={msisdn}",
-                UdrRecordDto.class,
+                UdrResponse.class,
                 testMsisdn
         );
 
-        assertEquals("00:05:00", response.getOutcomingCallTotalTime());
-        assertEquals("00:02:30", response.getIncomingCallTotalTime()); // Включает мартовский вызов
+        assertEquals("00:05:00", response.outcomingCallTotalTime());
+        assertEquals("00:02:30", response.incomingCallTotalTime()); // Включает мартовский вызов
     }
 
     // Тест 3: Получение UDR для всех абонентов
     @Test
     void getUdrForAllSubscribers_ReturnsAllAggregatedData() {
-        List<UdrRecordDto> response = restTemplate.getForObject(
+        List<UdrResponse> response = restTemplate.getForObject(
                 "/udr/all",
                 List.class
         );
@@ -125,14 +125,14 @@ public class UdrControllerIntegrationTest {
         subscriber.setMsisdn(newMsisdn);
         subscriberRepository.save(subscriber);
 
-        UdrRecordDto response = restTemplate.getForObject(
+        UdrResponse response = restTemplate.getForObject(
                 "/udr?msisdn={msisdn}",
-                UdrRecordDto.class,
+                UdrResponse.class,
                 newMsisdn
         );
 
-        assertEquals("00:00:00", response.getIncomingCallTotalTime());
-        assertEquals("00:00:00", response.getOutcomingCallTotalTime());
+        assertEquals("00:00:00", response.incomingCallTotalTime());
+        assertEquals("00:00:00", response.outcomingCallTotalTime());
     }
 
     @Test
